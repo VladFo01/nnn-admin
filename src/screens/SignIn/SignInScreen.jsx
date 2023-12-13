@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { routes } from '../../utils';
 import { useValidatedField } from '../../hooks';
 import { EMAIL_FIELD, STORE_NAMES } from '../../constants';
-// import { login, adminActions, getSync } from '@store';
+import { login } from '../../store';
 
 import { Container, Box, InputAdornment, IconButton } from '@mui/material';
 import { Buttons, Flex, Input, Loader, Typography } from '../../components';
@@ -24,7 +24,7 @@ const SignInScreen = () => {
   const [passwordError, setPasswordError] = useState(null);
   const [loginError, setLoginError] = useState(null);
 
-//   const { isPending } = useSelector(store => store[STORE_NAMES.AUTH]);
+  const { isPending } = useSelector(store => store[STORE_NAMES.AUTH]);
 
   const [, emailValue, setEmailValue, , validateEmail] = useValidatedField('', EMAIL_FIELD);
   const [passwordValue, setPasswordValue] = useState('');
@@ -52,14 +52,9 @@ const SignInScreen = () => {
 
   const handleLogin = async result => {
     setLoginError(null);
-    const {
-      coach,
-      coach: { token },
-    } = result.payload;
+    const { token } = result.payload;
     clearToken();
     setToken(token);
-    // await dispatch(adminActions.setAdminInfo({ coach }));
-    // dispatch(getSync());
 
     navigate(routes.root);
   };
@@ -89,7 +84,7 @@ const SignInScreen = () => {
     </Flex>
   );
 
-//   if (isPending) return <Loader />;
+  if (isPending) return <Loader />;
 
   return (
     <>

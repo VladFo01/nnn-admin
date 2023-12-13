@@ -21,7 +21,7 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route
-          path={routes.root}
+          path={routes.dashboard.root}
           element={
             <AuthRequired>
               <AdminPanel />
@@ -30,6 +30,10 @@ const Router = () => {
         />
         <Route path={routes.signIn} element={<SignInScreen />} />
         <Route path={routes.notFound} element={<NotFoundScreen />} />
+        <Route
+          path={routes.root}
+          element={<Navigate to={routes.dashboard.dishes} />}
+        />
         <Route path="*" element={<Navigate to={routes.notFound} />} />
       </Routes>
     </BrowserRouter>

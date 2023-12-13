@@ -26,3 +26,5 @@ export {
   SHORT_DESCRIPTION_FIELD,
   LONG_DESCRIPTION_FIELD,
 } from './validation';
+
+export { AUTH_ENDPOINTS } from './endpoints';
