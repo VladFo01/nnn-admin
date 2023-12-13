@@ -27,4 +27,4 @@ export {
   LONG_DESCRIPTION_FIELD,
 } from './validation';
 
-export { AUTH_ENDPOINTS } from './endpoints';
+export { AUTH_ENDPOINTS, FEEDBACK_ENDPOINTS, DISH_ENDPOINTS, ORDER_ENDPOINTS } from './endpoints';

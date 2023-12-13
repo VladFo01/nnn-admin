@@ -22,6 +22,9 @@ const FULFILLED_STATE = {
 
 const STORE_NAMES = {
   AUTH: 'authorization',
+  FEEDBACK: 'feedback',
+  DISHES: 'dishes',
+  ORDERS: 'orders',
 };
 
 export { INITIAL_STATE, PENDING_STATE, REJECTED_STATE, FULFILLED_STATE, STORE_NAMES };
