@@ -6,6 +6,10 @@ import { Sidebar } from './Components';
 import { routes } from '../../utils';
 import { Flex } from '../../components';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import Feedback from './pages/Feedback';
+import Dishes from './pages/Dishes';
+import Orders from './pages/Orders';
+import { ROLES } from '../../constants/common';
 
 const ChangeTitleHOC = ({ title, setPageTitle, children }) => {
   useEffect(() => {
@@ -16,32 +20,42 @@ const ChangeTitleHOC = ({ title, setPageTitle, children }) => {
   return <>{children}</>;
 };
 
-const menuItems = [
-  {
-    id: 1,
-    title: 'Dishes',
-    path: '/dishes',
-    component: <Typography>You are Dishes</Typography>,
-  },
-  {
-    id: 2,
-    title: 'Orders',
-    path: '/orders',
-    component: <Typography>You are Orders</Typography>,
-  },
-  {
-    id: 3,
-    title: 'Feedback',
-    path: '/feedback',
-    component: <Typography>You are Feedback</Typography>,
-  },
-  {
-    id: 4,
-    title: 'Booking',
-    path: '/booking',
-    component: <Typography>You are Booking</Typography>,
-  },
-];
+const menuItems = workerRole => {
+  const tabs = [
+    {
+      id: 2,
+      title: 'Orders',
+      path: '/orders',
+      component: <Orders />,
+    },
+  ];
+
+  if ([ROLES.ADMIN, ROLES.CHEF].includes(workerRole)) {
+    tabs.push({
+      id: 1,
+      title: 'Dishes',
+      path: '/dishes',
+      component: <Dishes />,
+    });
+  }
+
+  if ([ROLES.ADMIN].includes(workerRole)) {
+    tabs.push({
+      id: 3,
+      title: 'Feedback',
+      path: '/feedback',
+      component: <Feedback />,
+    });
+    tabs.push({
+      id: 4,
+      title: 'Booking',
+      path: '/booking',
+      component: <Typography>You are Booking</Typography>,
+    });
+  }
+
+  return tabs;
+};
 
 const AdminPanelScreen = () => {
   const { worker_info } = useSelector(store => store[STORE_NAMES.AUTH]);
@@ -58,17 +72,18 @@ const AdminPanelScreen = () => {
       <Flex paddingTop="80px" paddingLeft="250px" width="100vw" height="100vh">
         <Flex>
           <Routes>
-            {menuItems.map(({ id, title, path, component }) => (
-              <Route
-                key={id}
-                path={path}
-                element={
-                  <ChangeTitleHOC title={title} setPageTitle={setPageTitle}>
-                    {component}
-                  </ChangeTitleHOC>
-                }
-              />
-            ))}
+            {worker_info &&
+              menuItems(worker_info.role.title).map(({ id, title, path, component }) => (
+                <Route
+                  key={id}
+                  path={path}
+                  element={
+                    <ChangeTitleHOC title={title} setPageTitle={setPageTitle}>
+                      {component}
+                    </ChangeTitleHOC>
+                  }
+                />
+              ))}
             <Route path="*" element={<Navigate to={routes.notFound} />} />
           </Routes>
         </Flex>

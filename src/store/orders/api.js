@@ -2,16 +2,28 @@ import apiClient from '../../utils/apiClient';
 
 import { ORDER_ENDPOINTS, HTTP_METHODS } from '../../constants';
 
-const { CONFIRM } = ORDER_ENDPOINTS;
+const { CONFIRM, MARK_COOKED, GET_ALL } = ORDER_ENDPOINTS;
 
-const { POST } = HTTP_METHODS;
+const { POST, GET } = HTTP_METHODS;
 
 const confirmOrder = id =>
-  apiClient.unauthorizedRequest({
+  apiClient.authorizedRequest({
     method: POST,
     url: CONFIRM(id),
   });
 
-const api = { confirmOrder };
+const getAllOrders = () =>
+  apiClient.authorizedRequest({
+    method: GET,
+    url: GET_ALL,
+  });
+
+const markCookedOrder = id =>
+  apiClient.authorizedRequest({
+    method: POST,
+    url: MARK_COOKED(id),
+  });
+
+const api = { confirmOrder, getAllOrders, markCookedOrder };
 
 export default api;

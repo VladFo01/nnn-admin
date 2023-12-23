@@ -20,8 +20,10 @@ const initialState = {
 };
 
 const loginThunkName = `${AUTH}/login`;
+const logoutThunkName = `${AUTH}/logout`;
 
 export const login = createCommonAsyncThunk(loginThunkName, api.login);
+export const logout = createCommonAsyncThunk(logoutThunkName, api.logout);
 
 const authorizationSlice = createSlice({
   name: AUTH,
@@ -35,7 +37,7 @@ const authorizationSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addMatcher(isAnyOf(login.pending), state => {
+      .addMatcher(isAnyOf(login.pending, logout.pending), state => {
         if (!state.isPending) {
           return {
             ...state,
@@ -43,7 +45,7 @@ const authorizationSlice = createSlice({
           };
         }
       })
-      .addMatcher(isAnyOf(login.rejected), (state, action) => {
+      .addMatcher(isAnyOf(login.rejected, logout.rejected), (state, action) => {
         const {
           data: { message, errors },
           status,
@@ -62,10 +64,18 @@ const authorizationSlice = createSlice({
       .addMatcher(isAnyOf(login.fulfilled), (state, action) => {
         storage.setWorkerInfo(action.payload.worker);
         return {
-            ...state,
-            ...FULFILLED_STATE,
-            worker_info: action.payload.worker,
-          }
+          ...state,
+          ...FULFILLED_STATE,
+          worker_info: action.payload.worker,
+        };
+      })
+      .addMatcher(isAnyOf(logout.fulfilled), (state) => {
+        storage.clearLocalStorage();
+        return {
+          ...state,
+          ...FULFILLED_STATE,
+          worker_info: null,
+        };
       });
   },
 });

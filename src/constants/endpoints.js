@@ -1,5 +1,6 @@
 const AUTH_ENDPOINTS = {
   LOGIN: 'auth/login',
+  LOGOUT: 'auth/logout',
 };
 
 const FEEDBACK_ENDPOINTS = {
@@ -18,6 +19,8 @@ const DISH_ENDPOINTS = {
 
 const ORDER_ENDPOINTS = {
   CONFIRM: id => `/order/${id}/confirm`,
+  MARK_COOKED: id => `/order/${id}/mark-cooked`,
+  GET_ALL: '/order/all',
 };
 
 export { AUTH_ENDPOINTS, FEEDBACK_ENDPOINTS, DISH_ENDPOINTS, ORDER_ENDPOINTS };

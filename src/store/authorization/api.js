@@ -2,7 +2,7 @@ import apiClient from '../../utils/apiClient';
 
 import { AUTH_ENDPOINTS, HTTP_METHODS } from '../../constants';
 
-const { LOGIN } = AUTH_ENDPOINTS;
+const { LOGIN, LOGOUT } = AUTH_ENDPOINTS;
 
 const { POST } = HTTP_METHODS;
 
@@ -13,6 +13,12 @@ const login = data =>
     data,
   });
 
-const api = { login };
+const logout = () =>
+  apiClient.authorizedRequest({
+    method: POST,
+    url: LOGOUT,
+  });
+
+const api = { login, logout };
 
 export default api;

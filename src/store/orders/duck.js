@@ -18,8 +18,15 @@ const initialState = {
 };
 
 const confirmOrderThunkName = `${ORDERS}/confirm`;
+const markCookedOrderThunkName = `${ORDERS}/mark-cooked`;
+const getAllOrdersThunkName = `${ORDERS}/getAll`;
 
 export const confirmOrder = createCommonAsyncThunk(confirmOrderThunkName, api.confirmOrder);
+export const getAllOrders = createCommonAsyncThunk(getAllOrdersThunkName, api.getAllOrders);
+export const markCookedOrder = createCommonAsyncThunk(
+  markCookedOrderThunkName,
+  api.markCookedOrder,
+);
 
 const orderSlice = createSlice({
   name: ORDERS,
@@ -33,34 +40,43 @@ const orderSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addMatcher(isAnyOf(confirmOrder.pending), state => {
-        if (!state.isPending) {
-          return {
-            ...state,
-            ...PENDING_STATE,
-          };
-        }
-      })
-      .addMatcher(isAnyOf(confirmOrder.rejected), (state, action) => {
-        const {
-          data: { message, errors },
-          status,
-        } = action.payload;
+      .addMatcher(
+        isAnyOf(confirmOrder.pending, markCookedOrder.pending, getAllOrders.pending),
+        state => {
+          if (!state.isPending) {
+            return {
+              ...state,
+              ...PENDING_STATE,
+            };
+          }
+        },
+      )
+      .addMatcher(
+        isAnyOf(confirmOrder.rejected, getAllOrders.rejected, markCookedOrder.rejected),
+        (state, action) => {
+          const {
+            data: { message, errors },
+            status,
+          } = action.payload;
 
-        if (state.isPending) {
-          const newState = {
-            ...state,
-            ...REJECTED_STATE,
-            error: { message, status, errors },
-          };
+          if (state.isPending) {
+            const newState = {
+              ...state,
+              ...REJECTED_STATE,
+              error: { message, status, errors },
+            };
 
-          return newState;
-        }
-      })
-      .addMatcher(isAnyOf(confirmOrder.fulfilled), state => ({
-        ...state,
-        ...FULFILLED_STATE,
-      }));
+            return newState;
+          }
+        },
+      )
+      .addMatcher(
+        isAnyOf(confirmOrder.fulfilled, markCookedOrder.fulfilled, getAllOrders.fulfilled),
+        state => ({
+          ...state,
+          ...FULFILLED_STATE,
+        }),
+      );
   },
 });
 

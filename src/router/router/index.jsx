@@ -32,7 +32,7 @@ const Router = () => {
         <Route path={routes.notFound} element={<NotFoundScreen />} />
         <Route
           path={routes.root}
-          element={<Navigate to={routes.dashboard.dishes} />}
+          element={<Navigate to={routes.dashboard.orders} />}
         />
         <Route path="*" element={<Navigate to={routes.notFound} />} />
       </Routes>

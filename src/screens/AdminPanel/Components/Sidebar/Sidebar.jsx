@@ -17,41 +17,62 @@ import { Flex } from '../../../../components';
 
 import { routes } from '../../../../utils';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../../../store/authorization/duck';
+import { useDispatch } from 'react-redux';
+import { ROLES } from '../../../../constants/common';
 
 const drawerWidth = 250;
 
-const links = [
-  {
-    id: 1,
-    title: 'Dishes',
-    to: routes.dashboard.dishes,
-    icon: <LocalDiningIcon />,
-  },
-  {
-    id: 2,
-    title: 'Orders',
-    to: routes.dashboard.orders,
-    icon: <EditNoteIcon />,
-  },
-  {
-    id: 3,
-    title: 'Feedback',
-    to: routes.dashboard.feedback,
-    icon: <MapsUgcIcon />,
-  },
-  {
-    id: 4,
-    title: 'Booking',
-    to: routes.dashboard.booking,
-    icon: <TableBarIcon />,
-  },
-];
+const links = workerRole => {
+  const allowedLinks = [
+    {
+      id: 2,
+      title: 'Orders',
+      to: routes.dashboard.orders,
+      icon: <EditNoteIcon />,
+    },
+  ];
+
+  if ([ROLES.ADMIN, ROLES.CHEF].includes(workerRole)) {
+    allowedLinks.push({
+      id: 1,
+      title: 'Dishes',
+      to: routes.dashboard.dishes,
+      icon: <LocalDiningIcon />,
+    });
+  }
+
+  if ([ROLES.ADMIN].includes(workerRole)) {
+    allowedLinks.push({
+      id: 3,
+      title: 'Feedback',
+      to: routes.dashboard.feedback,
+      icon: <MapsUgcIcon />,
+    });
+    allowedLinks.push({
+      id: 4,
+      title: 'Booking',
+      to: routes.dashboard.booking,
+      icon: <TableBarIcon />,
+    });
+  }
+
+  return allowedLinks;
+};
 
 const Sidebar = ({ fullName, role, pageTitle }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleMenuButtonClick = path => {
     navigate(path);
+  };
+
+  const handleLogout = async () => {
+    const res = await dispatch(logout());
+    if (!res.error) {
+      navigate(routes.signIn);
+    }
   };
 
   return (
@@ -81,21 +102,30 @@ const Sidebar = ({ fullName, role, pageTitle }) => {
             <Typography variant="h6" component="p">
               {fullName}
             </Typography>
-            <Typography variant="h7" component="p" color="red">
+            <Typography variant="h7" component="p" color="#1976d2">
               {role}
+            </Typography>
+            <Typography
+              sx={{ cursor: 'pointer' }}
+              onClick={handleLogout}
+              variant="h7"
+              component="p"
+              color="red">
+              Logout
             </Typography>
           </Flex>
         </Toolbar>
         <Divider />
         <List>
-          {links.map(link => (
-            <ListItem key={link.id} disablePadding>
-              <ListItemButton onClick={() => handleMenuButtonClick(link.to)}>
-                <ListItemIcon>{link.icon}</ListItemIcon>
-                <ListItemText primary={link.title} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {role &&
+            links(role).map(link => (
+              <ListItem key={link.id} disablePadding>
+                <ListItemButton onClick={() => handleMenuButtonClick(link.to)}>
+                  <ListItemIcon>{link.icon}</ListItemIcon>
+                  <ListItemText primary={link.title} />
+                </ListItemButton>
+              </ListItem>
+            ))}
         </List>
       </Drawer>
     </Box>
