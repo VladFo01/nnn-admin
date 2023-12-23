@@ -6,6 +6,9 @@ import { Divider, Typography } from '@mui/material';
 import { confirmOrder, getAllOrders, markCookedOrder } from '../../../../store/orders/duck';
 import { ROLES } from '../../../../constants/common';
 import { toast } from 'react-toastify';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { getLocaleDateWithoutTime } from '../../../../utils/helpers';
 
 const ordersHeadCells = [
   {
@@ -62,6 +65,9 @@ const Orders = () => {
   const { isPending } = useSelector(state => state[STORE_NAMES.ORDERS]);
   const { worker_info } = useSelector(store => store[STORE_NAMES.AUTH]);
 
+  const [stats, setStats] = useState([]);
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
   const [ordersList, setOrdersList] = useState([]);
   const [toolbarTitle, setToolbarTitle] = useState(toolbarTitles.allOrders);
 
@@ -74,16 +80,26 @@ const Orders = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(16);
 
-  const loadOrdersListFunction = async () => {
-    const res = await dispatch(getAllOrders());
-    setOrdersList(convertData(res.payload));
-    setToolbarTitle(toolbarTitles.allOrders);
+  const loadOrdersListFunction = async (dateFrom, dateTo) => {
+    const res = await dispatch(getAllOrders({ dateFrom, dateTo }));
+    setOrdersList(convertData(res.payload.orders));
+    setStats(res.payload.stats);
+    setToolbarTitle(dateFrom || dateTo ? toolbarTitles.filteredOrders : toolbarTitles.allOrders);
   };
 
   useEffect(() => {
-    loadOrdersListFunction();
+    let dateToTransformed;
+    let dateFromTransformed;
+    if (dateFrom) {
+      dateFromTransformed = getLocaleDateWithoutTime(dateFrom);
+    }
+    if (dateTo) {
+      dateToTransformed = getLocaleDateWithoutTime(dateTo);
+    }
+
+    loadOrdersListFunction(dateFromTransformed, dateToTransformed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dateFrom, dateTo]);
 
   const handleOrderClick = (event, orderId) => {
     if (event.target.closest('input[type="checkbox"]')) {
@@ -133,10 +149,62 @@ const Orders = () => {
     return <></>;
   };
 
-  if (isPending) return <Loader />;
+  const handleDateToChange = newDate => {
+    setDateTo(newDate);
+    setStats([]);
+  };
+
+  const handleDateFromChange = newDate => {
+    setDateFrom(newDate);
+    setStats([]);
+  };
 
   return (
     <>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Flex margin="20px 0" padding="10px 20px">
+          <Flex flexDirection="row" justifyContent="center" gap="20px">
+            <DatePicker
+              value={dateFrom}
+              onChange={handleDateFromChange}
+              label="Date From"
+              disableFuture
+            />
+            <DatePicker
+              value={dateTo}
+              onChange={handleDateToChange}
+              label="Date To"
+              disableFuture
+            />
+          </Flex>
+          <Typography variant="h5" mt="20px" textAlign="center">{`Total income: ${
+            stats.length ? stats[0].totalIncome : '...'
+          }`}</Typography>
+        </Flex>
+      </LocalizationProvider>
+      {!isPending ? (
+        <Table
+          rows={ordersList.map(({ order }) => order)}
+          headCells={ordersHeadCells}
+          tableCells={ordersTableCells}
+          toolbarTitle={toolbarTitle}
+          order={order}
+          setOrder={setOrder}
+          page={page}
+          setPage={setPage}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
+          selected={selected}
+          setSelected={setSelected}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+          selectedStateActions={selectedStateActions(worker_info?.role.title)}
+          handleTableRowClick={handleOrderClick}
+          notAllowToSelect={worker_info?.role.title === ROLES.ADMIN}
+        />
+      ) : (
+        <Loader />
+      )}
       <Modal open={isOrderModalOpen} setOpen={setIsOrderModalOpen}>
         <Typography variant="h4" textAlign="center">
           Dishes
@@ -156,25 +224,6 @@ const Orders = () => {
             ))}
         </Flex>
       </Modal>
-      <Table
-        rows={ordersList.map(({ order }) => order)}
-        headCells={ordersHeadCells}
-        tableCells={ordersTableCells}
-        toolbarTitle={toolbarTitle}
-        order={order}
-        setOrder={setOrder}
-        page={page}
-        setPage={setPage}
-        orderBy={orderBy}
-        setOrderBy={setOrderBy}
-        selected={selected}
-        setSelected={setSelected}
-        rowsPerPage={rowsPerPage}
-        setRowsPerPage={setRowsPerPage}
-        selectedStateActions={selectedStateActions(worker_info?.role.title)}
-        handleTableRowClick={handleOrderClick}
-        notAllowToSelect={worker_info?.role.title === ROLES.ADMIN}
-      />
     </>
   );
 };

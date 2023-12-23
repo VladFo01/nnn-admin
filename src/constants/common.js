@@ -12,3 +12,8 @@ export const ORDER_STATUSES = {
   cooked: 'cooked',
   paid: 'paid',
 };
+
+export const DEFAULT_TIMEZONE_OFFSET = 2;
+
+export const ONE_MINUTE_MILLI = 60 * 1000;
+export const ONE_HOUR_MILLI = 60 * ONE_MINUTE_MILLI;

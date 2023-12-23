@@ -12,10 +12,14 @@ const confirmOrder = id =>
     url: CONFIRM(id),
   });
 
-const getAllOrders = () =>
+const getAllOrders = ({ dateFrom, dateTo }) =>
   apiClient.authorizedRequest({
     method: GET,
     url: GET_ALL,
+    params: {
+      dateFrom,
+      dateTo,
+    },
   });
 
 const markCookedOrder = id =>
