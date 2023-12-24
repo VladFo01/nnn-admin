@@ -161,27 +161,29 @@ const Orders = () => {
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Flex margin="20px 0" padding="10px 20px">
-          <Flex flexDirection="row" justifyContent="center" gap="20px">
-            <DatePicker
-              value={dateFrom}
-              onChange={handleDateFromChange}
-              label="Date From"
-              disableFuture
-            />
-            <DatePicker
-              value={dateTo}
-              onChange={handleDateToChange}
-              label="Date To"
-              disableFuture
-            />
+      {worker_info && worker_info.role.title === ROLES.ADMIN && (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Flex margin="20px 0" padding="10px 20px">
+            <Flex flexDirection="row" justifyContent="center" gap="20px">
+              <DatePicker
+                value={dateFrom}
+                onChange={handleDateFromChange}
+                label="Date From"
+                disableFuture
+              />
+              <DatePicker
+                value={dateTo}
+                onChange={handleDateToChange}
+                label="Date To"
+                disableFuture
+              />
+            </Flex>
+            <Typography variant="h5" mt="20px" textAlign="center">{`Total income: ${
+              stats.length ? stats[0].totalIncome : '...'
+            }`}</Typography>
           </Flex>
-          <Typography variant="h5" mt="20px" textAlign="center">{`Total income: ${
-            stats.length ? stats[0].totalIncome : '...'
-          }`}</Typography>
-        </Flex>
-      </LocalizationProvider>
+        </LocalizationProvider>
+      )}
       {!isPending ? (
         <Table
           rows={ordersList.map(({ order }) => order)}
