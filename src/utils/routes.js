@@ -7,7 +7,6 @@ const routes = {
       dishes: '/dashboard/dishes',
       orders: '/dashboard/orders',
       feedback: '/dashboard/feedback',
-      booking: '/dashboard/booking',
     }
   };
   

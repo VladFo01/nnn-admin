@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { STORE_NAMES } from '../../constants';
 import { Sidebar } from './Components';
@@ -45,12 +44,6 @@ const menuItems = workerRole => {
       title: 'Feedback',
       path: '/feedback',
       component: <Feedback />,
-    });
-    tabs.push({
-      id: 4,
-      title: 'Booking',
-      path: '/booking',
-      component: <Typography>You are Booking</Typography>,
     });
   }
 

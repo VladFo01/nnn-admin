@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
-import TableBarIcon from '@mui/icons-material/TableBar';
 import { Flex } from '../../../../components';
 
 import { routes } from '../../../../utils';
@@ -48,12 +47,6 @@ const links = workerRole => {
       title: 'Feedback',
       to: routes.dashboard.feedback,
       icon: <MapsUgcIcon />,
-    });
-    allowedLinks.push({
-      id: 4,
-      title: 'Booking',
-      to: routes.dashboard.booking,
-      icon: <TableBarIcon />,
     });
   }
 
